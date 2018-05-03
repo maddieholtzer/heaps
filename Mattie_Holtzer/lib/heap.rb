@@ -11,7 +11,17 @@ class BinaryMinHeap
 
   def extract
     ret = peek
-    
+    @store[0] = @store.pop()
+    idx = 0
+    child_indices = BinaryMinHeap.child_indices(count,idx)
+    while ((child_indices.length>0 && @store[idx] > @store[child_indices[0]]) || (child_indices.length>1 && @store[idx] > @store[child_indices[1]]))
+      smallest_child = [@store[child_indices[0]], child_indices[0]]
+      smallest_child = [@store[child_indices[1]], child_indices[1]] if child_indices.length>1 && @store[child_indices[1]] < @store[child_indices[0]]
+      @store[smallest_child[1]], @store[idx] = @store[idx], smallest_child[0]
+      idx = smallest_child[1]
+      child_indices = BinaryMinHeap.child_indices(count,idx)
+    end
+    ret
   end
 
   def peek
@@ -30,7 +40,7 @@ class BinaryMinHeap
   public
   def self.child_indices(len, parent_index)
     start = parent_index*2 + 1
-    return [] if start>len
+    return [] if start>=len
     return [start] if start==len-1
     [start, start+1]
   end
