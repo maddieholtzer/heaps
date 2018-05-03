@@ -51,6 +51,28 @@ class BinaryMinHeap
   end
 
   def self.heapify_down(array, parent_idx, len = array.length, &prc)
+    array.each_index do |idx|
+      inneridx = idx
+      child_indices = BinaryMinHeap.child_indices(len,inneridx)
+      if prc
+        while ((child_indices.length>0 && prc.call(array[inneridx], array[child_indices[0]])<=0) || (child_indices.length>1 && prc.call(array[inneridx], array[child_indices[1]])<=0))
+          smallest_child = [array[child_indices[0]], child_indices[0]]
+          smallest_child = [array[child_indices[1]], child_indices[1]] if child_indices.length>1 && prc.call(array[child_indices[1]], array[child_indices[0]])<=0
+          array[smallest_child[1]], array[inneridx] = array[inneridx], smallest_child[0]
+          inneridx = smallest_child[1]
+          child_indices = BinaryMinHeap.child_indices(len,inneridx)
+        end
+      else
+        while ((child_indices.length>0 && (array[inneridx]) > (array[child_indices[0]])) || (child_indices.length>1 && (array[inneridx]) > (array[child_indices[1]])))
+          smallest_child = [array[child_indices[0]], child_indices[0]]
+          smallest_child = [array[child_indices[1]], child_indices[1]] if child_indices.length>1 && (array[child_indices[1]]) < (array[child_indices[0]])
+          array[smallest_child[1]], array[inneridx] = array[inneridx], smallest_child[0]
+          inneridx = smallest_child[1]
+          child_indices = BinaryMinHeap.child_indices(len,inneridx)
+        end
+      end
+    end
+    array
   end
 
   def self.heapify_up(array, child_idx, len = array.length, &prc)
